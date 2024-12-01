@@ -1,4 +1,4 @@
-from oqs import KeyEcapsulation
+from oqs import KeyEncapsulation
 
 # encapsulates key(server-side)
 # returns ciphertext, newly combined key, and the client object
