@@ -90,9 +90,14 @@ def encrypt_file_symmetric(file_path: str, key: str):
 
 def decrypt_file_asymmetric(file_path: str):
     secure_passphrase = "wb8ipm9ir7mxu8uzb61nc7pomiq3bu"
+
+    # Decrypt the file with the secure passphrase
     with open(file_path, 'rb') as f:
         decrypted_data = gpg.decrypt_file(f, passphrase=secure_passphrase)
-        return decrypted_data.data.decode('utf-8')
+        with open(file_path[:-4] + "_decoded.txt", "wb") as f:
+            f.write(decrypted_data.data)
+        decoded_decrypted_data = decrypted_data.data.decode('utf-8')
+        return decoded_decrypted_data
 
 def decrypt_file_symmetric(file_path: str, key: str):
     with open(file_path, "rb") as f:
@@ -111,7 +116,7 @@ def decrypt_file_symmetric(file_path: str, key: str):
     old_plaintext = unpadding.update(new_plaintext) + unpadding.finalize()
 
     # Write the plaintext to the output file
-    with open(file_path[:-4] + "_decoded.txt", "wb") as f:
+    with open(file_path[:-4] + "_sym_decoded.txt", "wb") as f:
         f.write(old_plaintext)
     
 def delete_key(key_id):
@@ -133,6 +138,8 @@ def delete_keys(name, email):
 
 def export_public_keys(key_ids: str):
     ascii_armored_public_keys = gpg.export_keys(key_ids, False)
+
+    # Write public key(s) to a file
     gpg.export_keys(key_ids, False, output="encryption/exported_public_keys.txt")
     return ascii_armored_public_keys
 
@@ -147,59 +154,61 @@ def import_keys_path(key_path: str):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Test Cases~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# print("Test 1: Encrypting/Decrypting with a public and prinit_vecate key, respectively")
-# name = "J"
-# recipient_email = "Jef9921@nyu.edu"
+print("Test 1: Encrypting/Decrypting with a public and private key, respectively")
+name = "J"
+recipient_email = "Jef9921@nyu.edu"
 
-# # Generate a new key based on credentials
-# key_id = generate_key(name, recipient_email)
+# Generate a new key based on credentials
+key_id = generate_key_asymmetric(name, recipient_email)
 
-# # Encrypt and decrypt file "demo.txt"
-# encrypted = encrypt_file("encryption/demo.txt", recipient_email)
-# decrypted = decrypt_file("encryption/demo.txt.gpg")
+# Encrypt and decrypt file "demo.txt"
+encrypted = encrypt_file_asymmetric("encryption/demo.txt", recipient_email)
+decrypted = decrypt_file_asymmetric("encryption/demo.txt.gpg")
 
-# print(encrypted)
-# print(decrypted)
+print(encrypted)
+print(decrypted)
 
-# print("\nTest 1: Pass\n")
+print("\nTest 1: Pass\n")
 
-# print("Test 2: Encrypting with a public key only")
-# # Exporting name's Public Key before removal
-# ascii_armored_public_keys = export_public_keys(key_id)
+print("Test 2: Encrypting with a public key only")
+# Exporting name's Public Key before removal
+ascii_armored_public_keys = export_public_keys(key_id)
 
-# # Removal of name's Public and Prinit_vecate Key from local keyring
-# delete_key(key_id)
+# Removal of name's Public and Private Key from local keyring
+delete_key(key_id)
 
-# # Importing name's public key only
-# import_result = import_keys_path("encryption/exported_public_keys.txt")
-# imported_fingerprint = import_result.fingerprints[0]
-# exists, key_id = key_exists_fingerprint(imported_fingerprint)
+# Importing name's public key only
+import_result = import_keys_path("encryption/exported_public_keys.txt")
+imported_fingerprint = import_result.fingerprints[0]
+exists, key_id = key_exists_fingerprint(imported_fingerprint)
 
-# if exists:
-#     # Set the desired trust level for encryption to work
-#     trust_level = "TRUST_ULTIMATE"
+if exists:
+    # Set the desired trust level for encryption to work
+    trust_level = "TRUST_ULTIMATE"
 
-#     # Edit the trust level
-#     gpg.trust_keys(imported_fingerprint, trust_level)
+    # Edit the trust level
+    gpg.trust_keys(imported_fingerprint, trust_level)
 
 
-# # Encrypting a file with name's public key via email
-# encrypted = encrypt_file("encryption/demo_outgoing.txt", recipient_email)
+# Encrypting a file with name's public key via email
+encrypted = encrypt_file_asymmetric("encryption/demo_outgoing.txt", recipient_email)
 
-# print("\nTest 2: Pass\n")
+print("\nTest 2: Pass\n")
 
-# # cleanup
-# delete_key(key_id)
-# # delete_keys(name, recipient_email)
+# cleanup
+delete_key(key_id)
+# delete_keys(name, recipient_email)
 
 # generate_key_asymmetric("J", "Jef9921@nyu.edu")
 
+
+print("Test 3: Encrypting/Decrypting with a Symmetric Key")
 key = generate_key_symmetric()
 
 encrypt_file_symmetric("encryption/demo.txt", key)
 decrypt_file_symmetric("encryption/demo.txt.enc", key)
 
-
+print("\nTest 3: Pass\n")
 
 
 
