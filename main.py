@@ -53,18 +53,18 @@ def main():
     # Client-side operations
     print("\nClient-Side Operations")
     
-    # Step 6: Decapsulate the AES key
+    # Decapsulate the AES key
     with open(encrypted_aes_key_path, "rb") as f:
         ciphertext = f.read()
     recovered_aes_key = decap(ciphertext, client)
     print("AES key successfully decapsulated.")
 
-    # Step 7: Decrypt the file using the recovered AES key
+    # Decrypt the file using the recovered AES key
     decrypt_file_symmetric(encrypted_file_path, recovered_aes_key)
     decrypted_file_path = encrypted_file_path[:-4] + "_decoded.txt"
     print(f"File decrypted. Decrypted file saved at {decrypted_file_path}")
 
-    # Step 8: Verify the signature on the decrypted file's content
+    # Verify the signature on the decrypted file's content
     with open(decrypted_file_path, "r") as f:
         decrypted_content = f.read()
     is_valid = verify_signature(decrypted_content, signature, public_key)
