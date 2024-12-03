@@ -1,5 +1,13 @@
 # Cryptography-Legal-Industry
-An Internet Security &amp; Privacy project that employs cryptography to solve an issue in the legal industry
+
+### An Internet Security &amp; Privacy project that employs cryptography to solve  confidentiality, authenticity, and integrity issues within the legal industry.
+
+
+## Prerequisites
+- [Git](https://git-scm.com/)
+- [liboqs](https://github.com/open-quantum-safe/liboqs)
+- [Python 3](https://www.python.org/)
+- [GPG](https://www.gnupg.org/download/)
 
 ## Step 1:
 
@@ -41,12 +49,19 @@ pip install -r requirements.txt
 to install any additional dependencies.
 
 ## Step 3:
-Download GPG for asymmetric key management/operations: 
-[https://www.gpg4win.org/get-gpg4win.html](https://www.gnupg.org/download/)
 
-## Step 4:
-Execute 
+Ensure your GPG keybox daemon/GPG agent is running in the background and execute 
 ```
 python main.py
 ```
 for a demo of the available features within this project.
+
+### Contributors
+
+Contributors include:
+
+- Cris Cortes
+- Eileen Xu
+- Josue Flores
+- Lakshmi Raj
+- Yukta Kalkarni
