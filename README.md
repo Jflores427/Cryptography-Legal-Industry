@@ -60,7 +60,7 @@ for a demo of the available features within this project.
 
 Contributors include:
 
-- Cris Cortes
+- Chris Cortes
 - Eileen Xu
 - Josue Flores
 - Lakshmi Raj
